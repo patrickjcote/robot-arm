@@ -9,7 +9,7 @@ int main(void)
 	P1DIR |= BIT0; 							// Internal LEDs P1.0 of Launchpad is output
 
 	P1DIR |= BIT6;							// P1.6/TA0.1 is used for PWM, thus also an output -> servo 1
-	P2DIR |= BIT2;							// P2.2/TA1.1 is used for PWM, thus also an output -> servo 2
+    P2DIR |= BIT2;	                        // P2.2/TA1.1 is used for PWM, thus also an output -> servo 2
 
 	P1OUT = 0; 								// Clear all outputs P1
 	P2OUT = 0; 								// Clear all outputs P2
@@ -17,10 +17,7 @@ int main(void)
 	P1SEL |= BIT6;                          // P1.6 select TA0.1 option
 	P2SEL |= BIT2;                          // P2.2 select TA1.1 option
 
-	// if SMCLK is about 1MHz (or 1000000Hz),
-	// and 1000ms are the equivalent of 1 Hz,
-	// then, by setting CCR0 to 20000 (1000000 / 1000 * 20)
-	// we get a period of 20ms
+    //SMCLOCK is 1MHz so 22222 is about 20ms PWM Period
 	TA0CCR0 = 22222;                           // PWM Period TA0.1
 	TA1CCR0 = 22222;                           // PWM Period TA1.1
 
@@ -36,12 +33,10 @@ int main(void)
 	while(1){
 		for (i = 900; i < 2000; i++)
 		{
-
 			TA0CCR1 = i;
 			TA1CCR1 = i;
 			__delay_cycles(2000);
-
-		}
+		}//for
 		for (i = 2000; i > 900; i--)
 		{
 
@@ -49,6 +44,8 @@ int main(void)
 			TA1CCR1 = i;
 			__delay_cycles(2000);
 
-		}
-	}
-}
+		}//for
+	}//while
+}//main()
+
+//main.c
