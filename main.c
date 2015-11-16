@@ -1,10 +1,15 @@
+//Includes
 #include  <msp430.h>
 
+//Prototypes
 void initialize();
 void testInput(char inChar);
 void messageOut(char messageIn[], int length);
 
-volatile int servoPosition;
+//Global
+volatile int servoPosition[4] = {1500, 1500, 1500, 1500};
+volatile int servoNum = 0;
+volatile int testVar;
 
 int main(void)
 {
@@ -42,18 +47,22 @@ void initialize(){
 	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 	IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
 
-	//---------------------- Servo PWM Setup ----------------------------
+	//---------------------- Servo 1 + 2 PWM Setup --------------------------
 
-	P2DIR |= 0x0F;							// P2.2/TA1.1 is used for PWM, thus also an output -> servo 2
+	P2DIR |= 0xFF;							// P2 all output
 	P2OUT = 0; 								// Clear all outputs P2
-	P2SEL |= BIT1 + BIT2;                          // P2.2 select TA1.1 option
-	TA1CCR0 = 22222;                        // PWM Period TA1.1 of 20ms
+	P2SEL = 0xFF;                   		// P2 select TA1 option
+	TA1CCR0 = 20000;                        // PWM Period on TA1 of 20ms
 	TA1CCR1 = 1500;                         // CCR1 PWM duty cycle
 	TA1CCTL1 = OUTMOD_7;                    // CCR1 reset/set
+	TA1CCR2 = 1500;                         // CCR2 PWM duty cycle
+	TA1CCTL2 = OUTMOD_7;                    // CCR2 reset/set
 	TA1CTL   = TASSEL_2 + MC_1;             // SMCLK, up mode
+	TA1CCTL0 |= CCIE;
 
-}//setRegisters()
+}//initialize()
 
+// ---------- Interrupts ------------------------------
 #pragma vector=USCIAB0RX_VECTOR
 //  Echo back RXed character, confirm TX buffer is ready first
 __interrupt void USCI0RX_ISR(void)
@@ -63,30 +72,50 @@ __interrupt void USCI0RX_ISR(void)
 	testInput(inChar);
 }
 
+// Timer A interrupt service routine
+#pragma vector=TIMER1_A0_VECTOR
+__interrupt void TIMERA1_ISR(void)
+{
+
+	TA1CCR1 = servoPosition[0];
+	TA1CCR2 = servoPosition[1];
+
+}//timer interrupt()
+
+
+// --------- Serial Comm Functions --------------------
 void testInput(char inChar){
 
-	switch(inChar){
+	volatile int i;
 
+	switch(inChar){
 	case 's':
-		servoPosition += 50;
+		servoPosition[0] += 25;
 		break;
 	case 'w':
-		servoPosition -= 50;
+		servoPosition[0] -= 25;
+		break;
+	case 'd':
+		servoPosition[1] += 25;
+		break;
+	case 'a':
+		servoPosition[1] -= 25;
 		break;
 	default:
 		messageOut("Invalid Key",11);
 		break;
 	}//switch
 
-	if(servoPosition < 900){
-		servoPosition = 900;
-		messageOut("Hit High Edge",13);
+	for(i = 0; i < 4; i++){
+		if(servoPosition[i] < 900){
+			servoPosition[i] = 900;
+			messageOut("Hit High Edge",13);
+		}
+		if(servoPosition[i] > 2000){
+			servoPosition[i]=2000;
+			messageOut("Hit Low Edge",12);
+		}
 	}
-	if(servoPosition > 2000){
-		servoPosition=2000;
-		messageOut("Hit Low Edge",12);
-	}
-	TA1CCR1 = servoPosition;
 }//testInput()
 
 void messageOut(char messageIn[], int length){
