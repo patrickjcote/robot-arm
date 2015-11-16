@@ -39,16 +39,21 @@ void initialize(){
 	//---------------------- Servo PWM Setup -----------------------------
 	//	TA1CCR1 Controls duty cycle for motors 1 + 2
 	//	TA1CCR2 Controls duty cycle for motors 3 + 4
+	//	Motor 1 on P2.1, Motor 2 on 2.2
+	//	Motor 3 on P2.4, Motor 4 on 2.5
 
-	P2DIR |= 0xFF;							// P2 all output
-	//TODO: UPDATE P2 direction to only pins being used
-	P2OUT = 0; 								// Clear all outputs P2
+	P2DIR = 0xFF;							// P2 all output
+	P2OUT = 0x00; 							// Clear all outputs P2
+
 	P2SEL = BIT1 | BIT4;                    // P2 select TA1 option
+
 	TA1CCR0 = PWM_PERIOD;                   // PWM Period on TA1 of 20ms
-	TA1CCR1 = 1500;                         // CCR1 PWM duty cycle
-	TA1CCTL1 = OUTMOD_7 + CCIE;             // CCR1 reset/set
 	TA1CTL   = TASSEL_2 + MC_1;             // SMCLK, up mode
 	TA1CCTL0 |= CCIE;						// Compare/Control Interrupt Enable
+
+	TA1CCTL1 = OUTMOD_7 + CCIE;             // CCR1 reset/set
+	TA1CCTL2 = OUTMOD_7 + CCIE;             // CCR2 reset/set
+
 
 }//initialize()
 

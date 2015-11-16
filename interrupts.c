@@ -24,8 +24,10 @@ __interrupt void USCI0RX_ISR(void)
 __interrupt void TIMERA1_ISR(void)
 {
 	TA1CCTL1 = OUTMOD_7 + CCIE;
-	P2SEL = BIT1;
+	TA1CCTL2 = OUTMOD_7 + CCIE;
+	P2SEL = BIT1 + BIT4;
 	TA1CCR1 = servoPosition[0];
+	TA1CCR2 = servoPosition[2];
 
 }//timerA1.0 interrupt()
 
@@ -38,8 +40,15 @@ __interrupt void TIMERA11_ISR(void)
 	switch(TA1IV){
 	case 2:
 		TA1CCTL1 = OUTMOD_1;
-		P2SEL = BIT2;
+		P2SEL &= ~BIT1;
+		P2SEL |= BIT2;
 		TA1CCR1 = PWM_PERIOD - servoPosition[1];
+		break;
+	case 4:
+		TA1CCTL2 = OUTMOD_1;
+		P2SEL &= ~BIT4;
+		P2SEL |= BIT5;
+		TA1CCR2 = PWM_PERIOD - servoPosition[3];
 		break;
 	default:
 		break;

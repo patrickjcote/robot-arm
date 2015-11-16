@@ -17,13 +17,33 @@ void testInput(char inChar){
 	case 'a':
 		servoPosition[1] -= 50;
 		break;
+
+	case 'k':
+		servoPosition[2] += 50;
+		break;
+	case 'i':
+		servoPosition[2] -= 50;
+		break;
+	case 'l':
+		servoPosition[3] += 50;
+		break;
+	case 'j':
+		servoPosition[3] -= 50;
+		break;
+
+	case 'r':
+		servoPosition[0] = 1500;
+		servoPosition[1] = 1500;
+		servoPosition[2] = 1500;
+		servoPosition[3] = 1500;
+		break;
 	default:
 		messageOut("Invalid Key",11);
 		break;
 	}//switch
 
 	for(i = 0; i < 4; i++){
-		if(servoPosition[i] < 900){
+		if(servoPosition[i] < 1000){
 			servoPosition[i] = 900;
 			messageOut("Hit High Edge",13);
 		}
