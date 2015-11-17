@@ -22,7 +22,7 @@ void initialize(){
 	//--------------------- Serial Comm Setup -------------------------
 	if (CALBC1_1MHZ==0xFF)					// If calibration constant erased
 	{
-		while(1);                               // do not load, trap CPU!!
+		while(1);                             // do not load, trap CPU!!
 	}
 	DCOCTL = 0;                               // Select lowest DCOx and MODx settings
 	BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
@@ -51,8 +51,8 @@ void initialize(){
 	TA1CTL   = TASSEL_2 + MC_1;             // SMCLK, up mode
 	TA1CCTL0 |= CCIE;						// Compare/Control Interrupt Enable
 
-	TA1CCTL1 = OUTMOD_7 + CCIE;             // CCR1 reset/set
-	TA1CCTL2 = OUTMOD_7 + CCIE;             // CCR2 reset/set
+	TA1CCTL1 = OUTMOD_7 + CCIE;             // CCR1 reset/set, Interrupt Enable
+	TA1CCTL2 = OUTMOD_7 + CCIE;             // CCR2 reset/set, Interrupt Enable
 
 
 }//initialize()
