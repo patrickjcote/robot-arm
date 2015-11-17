@@ -4,8 +4,6 @@ CSCI 255 - Intro to Embedded Systems
 
 Code for a robot arm controlled by an MSP430 microcontroller
 
-
--- All Servo Branch --
 Using WASD and IJKL all servos can be controlled using one microcontroller.
 
 By sending two duty cycles on separate pins during one period it is possible to
