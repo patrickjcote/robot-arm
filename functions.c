@@ -1,71 +1,77 @@
 #include "robotarm.h"
 
+void moveServo(int servoNumber, int upOrDown){
+
+	servoPosition[servoNumber] += upOrDown;
+
+	if(upOrDown == UP && servoPosition[servoNumber] > 2000)
+		servoPosition[servoNumber] = 2000; // Max 10% Duty Cycle
+	if(upOrDown == DOWN && servoPosition[servoNumber] < 1000)
+		servoPosition[servoNumber] = 1000; // Min 5% Duty Cycle
+
+}//moveServo()
+
 void testInput(char inChar){
 
-	volatile int i;
-
 	switch(inChar){
-	case 's':
-		servoPosition[0] += 50;
+	case 's': //Arm forward
+		moveServo(0, UP);
 		break;
-	case 'w':
-		servoPosition[0] -= 50;
+	case 'w': //Arm back
+		moveServo(0,DOWN);
 		break;
-	case 'd':
-		servoPosition[1] += 50;
+	case 'd': //Rotate CCW
+		moveServo(1, UP);
 		break;
-	case 'a':
-		servoPosition[1] -= 50;
-		break;
-
-	case 'k':
-		servoPosition[2] += 50;
-		break;
-	case 'i':
-		servoPosition[2] -= 50;
-		break;
-	case 'l':
-		servoPosition[3] += 50;
-		break;
-	case 'j':
-		servoPosition[3] -= 50;
+	case 'a': //Rotate CW
+		moveServo(1, DOWN);
 		break;
 
-	case 'r':
+	case 'i': //Arm up
+		moveServo(2, UP);
+		break;
+	case 'k': //Arm down
+		moveServo(2, DOWN);
+		break;
+	case 'l': //Close claw
+		moveServo(3, UP);
+		break;
+	case 'j': //Open claw
+		moveServo(3, DOWN);
+		break;
+
+	case 'r': //Reset position
 		servoPosition[0] = 1500;
 		servoPosition[1] = 1500;
 		servoPosition[2] = 1500;
 		servoPosition[3] = 1500;
 		break;
+
 	default:
-		messageOut("Invalid Key",11);
+		messageOut("----- Invalid Key -----",23);
+		messageOut("Left/Right: 'a' + 'd'",21);
+		messageOut("Up/Down: 'i' + 'k'",18);
+		messageOut("Forward/Back: 'w' + 's'",23);
+		messageOut("Open/Close: 'l' + 'j'",21);
+		messageOut("Reset Position: 'r'",19);
+		messageOut("",0); //Newline
 		break;
 	}//switch
 
-	for(i = 0; i < 4; i++){
-		if(servoPosition[i] < 1000){
-			servoPosition[i] = 900;
-			messageOut("Hit High Edge",13);
-		}
-		if(servoPosition[i] > 2000){
-			servoPosition[i]=2000;
-			messageOut("Hit Low Edge",12);
-		}
-	}
 }//testInput()
 
 void messageOut(char messageIn[], int length){
 
 	volatile int i;
 	for(i = 0; i < length; i++){
-		while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-		UCA0TXBUF = messageIn[i];
+		while (!(IFG2&UCA0TXIFG));  // USCI_A0 TX buffer ready?
+		UCA0TXBUF = messageIn[i];	// Send character
 	}//for
 
-	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-	UCA0TXBUF = 0x0A;
-	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-	UCA0TXBUF = 0x0D;
+	while (!(IFG2&UCA0TXIFG));      // USCI_A0 TX buffer ready?
+	UCA0TXBUF = 0x0A;				// Send Line feed
+	while (!(IFG2&UCA0TXIFG));      // USCI_A0 TX buffer ready?
+	UCA0TXBUF = 0x0D;				// Send Carriage return
 
 }//outputMessage()
 
