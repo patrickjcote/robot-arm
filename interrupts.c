@@ -48,13 +48,13 @@ __interrupt void TIMERA11_ISR(void)
 	case 2: //Timer A1.1 Interrupt
 		TA1CCTL1 = OUTMOD_1;
 		P2SEL &= ~BIT1;		// Stop output of Timer A1.1 on Pin 2.1
-		P2SEL |= BIT2;		// A1.1 Output Mode and Enable Interrupt
+		P2SEL |= BIT2;		// TA1.1 Output on Pin 2.2 
 		TA1CCR1 = PWM_PERIOD - servoPosition[1];	// Motor 1 duty cycle
 		break;
 	case 4: //Timer A1.2 Interrupt
 		TA1CCTL2 = OUTMOD_1;
 		P2SEL &= ~BIT4;		// Stop output of Timer A1.2 on Pin 2.4
-		P2SEL |= BIT5;		// A1.2 Output Mode and Enable Interrupt
+		P2SEL |= BIT5;		// TA1.2 Output on P2.5
 		TA1CCR2 = PWM_PERIOD - servoPosition[3];	// Motor 3 duty cycle
 		break;
 	default:
