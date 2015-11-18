@@ -45,7 +45,7 @@ void initialize(){
 	P2DIR = 0xFF;							// P2 all output
 	P2OUT = 0x00; 							// Clear all outputs P2
 
-	P2SEL = BIT1 | BIT4;                    // P2 select TA1 option
+	P2SEL = BIT1 | BIT4;                    // TA1 output on Bit1 and Bit4
 
 	TA1CCR0 = PWM_PERIOD;                   // PWM Period on TA1 of 20ms
 	TA1CTL   = TASSEL_2 + MC_1;             // SMCLK, up mode

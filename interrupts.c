@@ -6,7 +6,7 @@ __interrupt void USCI0RX_ISR(void)
 {
 
 	volatile char inChar;
-	inChar = UCA0RXBUF;		// Reads in UART serial port
+	inChar = UCA0RXBUF;		// Read in UART serial port
 	testInput(inChar);		// Test the input
 
 }//UART_ISR()
@@ -37,7 +37,7 @@ __interrupt void TIMERA1_ISR(void)
 // ------- Timer_A 1.1 + 1.2 ISR ------------------------------
 //
 // This ISR sets up the second duty cycle
-// A1 Interrupt Vector (TAIV) is 2 for A1.1 and 4 for A1.2
+// A1 Interrupt Vector (TAIV) = 2 for A1.1 and 4 for A1.2
 // Outmode_1 is low until CCRn is hit
 //
 // -----------------------------------------------------
