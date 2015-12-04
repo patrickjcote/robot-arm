@@ -1,12 +1,12 @@
 #include "robotarm.h"
 
-void moveServo(int servoNumber, int upOrDown){
+void moveServo(int servoNumber, int direction){
 
-	servoPosition[servoNumber] += upOrDown;
+	servoPosition[servoNumber] += direction;
 
-	if(upOrDown == UP && servoPosition[servoNumber] > 2000)
+	if(direction == UP && servoPosition[servoNumber] > 2000)
 		servoPosition[servoNumber] = 2000; // Max 10% Duty Cycle
-	if(upOrDown == DOWN && servoPosition[servoNumber] < 1000)
+	if(direction == DOWN && servoPosition[servoNumber] < 1000)
 		servoPosition[servoNumber] = 1000; // Min 5% Duty Cycle
 
 }//moveServo()
@@ -14,17 +14,17 @@ void moveServo(int servoNumber, int upOrDown){
 void testInput(char inChar){
 
 	switch(inChar){
-	case 's': //Arm forward
+	case 'w': //Arm forward
 		moveServo(0, UP);
 		break;
-	case 'w': //Arm back
+	case 's': //Arm back
 		moveServo(0,DOWN);
 		break;
 	case 'd': //Rotate CCW
-		moveServo(1, UP);
+		moveServo(1, LEFT);
 		break;
 	case 'a': //Rotate CW
-		moveServo(1, DOWN);
+		moveServo(1, RIGHT);
 		break;
 
 	case 'i': //Arm up
@@ -47,7 +47,7 @@ void testInput(char inChar){
 		servoPosition[3] = 1500;
 		break;
 
-	default:
+	default:  //Not a valid Key, Display possible keys
 		messageOut("----- Invalid Key -----",23);
 		messageOut("Left/Right: 'a' + 'd'",21);
 		messageOut("Up/Down: 'i' + 'k'",18);
@@ -63,7 +63,7 @@ void testInput(char inChar){
 void messageOut(char messageIn[], int length){
 
 	volatile int i;
-	for(i = 0; i < length; i++){
+	for(i = 0; i < length; i++){	// Loop through each character
 		while (!(IFG2&UCA0TXIFG));  // USCI_A0 TX buffer ready?
 		UCA0TXBUF = messageIn[i];	// Send character
 	}//for
